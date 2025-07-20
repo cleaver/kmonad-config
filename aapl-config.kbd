@@ -1,0 +1,70 @@
+(defcfg
+  input (device-file "/dev/input/by-path/pci-0000:07:00.3-usb-0:2.2:1.0-event-kbd")
+  output (uinput-sink "KMonad apple kbd")
+  fallthrough true)
+
+(defsrc
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end ins del
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lalt lmet           spc       rmet ralt rctl left down up right
+  pgup pgdn
+)
+
+(defalias
+  ;; --home row mods left--
+  sft_a (tap-hold-next-release 220 a lsft)
+  ctl_s (tap-hold-next-release 200 s lctl)
+  alt_d (tap-hold-next-release 200 d lalt)
+  met_f (tap-hold-next-release 200 f lmet)
+
+  ;; --home row mods right--
+  met_j (tap-hold-next-release 200 j rmet)
+  alt_k (tap-hold-next-release 200 k lalt)
+  ctl_l (tap-hold-next-release 200 l rctl)
+  sft_; (tap-hold-next-release 220 ; rsft)
+
+  ;; --layers--
+  cnav (tap-hold-next-release 200 esc (layer-toggle nav))
+
+  ;; --combinations--
+  rword C-right
+  srword S-C-right
+  lword C-left
+  slword S-C-left
+  ctab C-tab
+  sctab S-C-tab
+)
+
+(deflayer base
+  caps   f1      f2     f3     f4     f5    f6    f7       f8       f9       f10    f11  f12  home end ins del
+  grv    1       2      3      4      5     6     7        8        9        0      -    =    bspc
+  tab    q       w      e      r      t     y     u        i        o        p      [    ]    \
+  @cnav  @sft_a  @ctl_s @alt_d @met_f g     h     @met_j   @alt_k   @ctl_l   @sft_; '    ret
+  lsft   z       x      c      v      b     n     m        ,        .        /      rsft
+  lctl   lmet    lalt                 spc         ralt     prnt     rctl     left down up right
+  pgup pgdn
+)
+
+(deflayer nav
+  -      f1      f2     f3     f4     f5    f6    f7       f8       f9       f10    f11  f12  home end ins del
+  grv    1       2      3      4      5     6     7        8        9        0      -    =    bspc
+  -      -       -      -      -      -     -     home     @lword   @rword   end    -    -    -
+  -      @sft_a  @ctl_s @alt_d @met_f -     -     left     down     up       right  -    -  
+  -      -       -      -      -      -     -     pgup     @slword  @srword  pgdn   -
+  lctl   lmet    lalt                 spc         ralt     prnt     rctl     left down up right
+  pgup pgdn
+)
+
+(deflayer blank
+  -      f1      f2     f3     f4     f5    f6    f7       f8       f9       f10    f11  f12  home end ins del
+  -      1       2      3      4      5     6     7        8        9        0      -    =    bspc
+  -      -       -      -      -      -     -     -        -        -        -      -    -    -
+  -      -       -      -      -      -     -     -        -        -        -      -    -  
+  -      -       -      -      -      -     -     -        -        -        -      -
+  lctl   lmet    lalt                 spc         ralt     prnt     rctl     left down up right
+  pgup pgdn
+)
+
