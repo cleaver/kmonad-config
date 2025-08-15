@@ -65,7 +65,7 @@
 
 (deflayer layer1
   caps   f1      f2     f3     f4     f5    f6       f7       f8       f9       f10    f11     f12  home end ins del
-  grv    1       2      3      4      5     6        7        8        9        0      -       =    bspc
+  grv    1       2      3      4      5     6        7        8        9        0      -       =    del
   tab    q       w      e      r      t     @barrow  @sarrow  @darrow  [        ]      @pipe   ]    \
   caps   @sft_a  @ctl_s @alt_d @met_f g     h        -        =        {        }      '       ret
   lsft   z       x      c      v      b     n        m        ,        .        /      rsft
