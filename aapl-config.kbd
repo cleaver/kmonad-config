@@ -1,5 +1,5 @@
 (defcfg
-  input (device-file "/dev/input/by-path/pci-0000:07:00.3-usb-0:2.2:1.0-event-kbd")
+  input (device-file "/dev/input/aapl-keyboard")
   output (uinput-sink "KMonad apple kbd")
   fallthrough true)
 
