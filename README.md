@@ -7,30 +7,74 @@
 
 ## Run a Kmonad Service
 
-### Define a service for built-in keyboard
+To have `kmonad` run automatically, you need to set it up as a service. For the built-in keyboard, this must be a **system service** so that it can take control of the keyboard at the login screen.
 
-1. Create file: `.config/systemd/user/kmonad.service`
+### 1. Isolate the Keyboard from the Display Server
 
+First, you must prevent your graphical environment (Xorg or Wayland) from grabbing the keyboard. This allows `kmonad` to get the exclusive access it needs.
+
+#### For Wayland (Gnome, etc.)
+Create a `udev` rule to tell `libinput` (the input library used by Wayland) to ignore the keyboard.
+
+1.  Find a unique attribute for your keyboard, like its physical address:
+    ```sh
+    # Replace 'eventX' with your keyboard's actual event device
+    udevadm info -a -n /dev/input/eventX | grep 'phys'
+    ```
+
+2.  Create the file `/etc/udev/rules.d/99-kmonad-ignore.rules` with a rule matching your device.
+    ```udev
+    # This rule is for the built-in laptop keyboard.
+    # Replace the ATTRS{phys} value if your keyboard is different.
+    ACTION=="add|change", KERNEL=="event*", ATTRS{phys}=="isa0060/serio0/input0", ENV{LIBINPUT_IGNORE_DEVICE}="1"
+    ```
+
+#### For Xorg
+Create an `xorg.conf.d` file to tell Xorg to ignore the keyboard.
+
+1.  Create the file `/etc/X11/xorg.conf.d/99-kmonad.conf`:
+    ```
+    Section "InputClass"
+        Identifier "kmonad keyboard"
+        # Match your keyboard's device path
+        MatchDevicePath "/dev/input/by-path/platform-i8042-serio-0-event-kbd"
+        Option "Ignore" "on"
+    EndSection
+    ```
+
+After creating the appropriate file, reload the `udev` rules and reboot.
+```sh
+sudo udevadm control --reload-rules && sudo udevadm trigger
+# A reboot is required for the display server to release the device.
 ```
-[Unit]
-Description=KMonad keyboard remapping
 
-[Service]
-Type=simple
-ExecStart=/usr/bin/kmonad %h/.config/kmonad/config.kbd
-Restart=always
-RestartSec=3
+### 2. Define a service for the built-in keyboard
 
-[Install]
-WantedBy=default.target
-```
+Because the display server now ignores the keyboard, `kmonad` *must* be running at the login screen to provide input.
 
-2. Enable and start the service:
+1.  Create the system service file: `/etc/systemd/system/kmonad.service`
+    ```
+    [Unit]
+    Description=KMonad keyboard remapping (system service)
 
-```
-systemctl --user enable kmonad.service
-systemctl --user start kmonad.service
-```
+    [Service]
+    # Replace 'cleaver' with your actual username
+    User=cleaver
+    ExecStart=/usr/bin/kmonad /home/cleaver/.config/kmonad/config.kbd
+    Restart=always
+    RestartSec=3
+
+    [Install]
+    WantedBy=graphical.target
+    ```
+
+2.  Enable and start the service:
+    ```sh
+    sudo systemctl daemon-reload
+    sudo systemctl enable kmonad.service
+    sudo systemctl start kmonad.service
+    ```
+
 
 ### Trigger on Keyboard Connect:
 
