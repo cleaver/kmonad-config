@@ -1,4 +1,4 @@
-;; --apple keyboard + linux keymapping--
+;; --apple keyboard + apple keymapping--
 (defcfg
   input (iokit-name)
   output (kext)
@@ -32,10 +32,10 @@
   slayer (tap-hold-next-release 220 spc (layer-toggle layer1))
 
   ;; --combinations--
-  rword C-right
-  srword S-C-right
-  lword C-left
-  slword S-C-left
+  rword M-right
+  srword S-M-right
+  lword M-left
+  slword S-M-left
   ctab C-tab
   sctab S-C-tab
   sarrow (tap-macro - >)
@@ -73,3 +73,4 @@
   lctl   lalt    lmet                 spc            rmet     ralt     rctl     left down up right
   pgup pgdn
 )
+
