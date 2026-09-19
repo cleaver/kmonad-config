@@ -32,10 +32,10 @@
   slayer (tap-hold-next-release 220 spc (layer-toggle layer1))
 
   ;; --combinations--
-  rword M-right
-  srword S-M-right
-  lword M-left
-  slword S-M-left
+  rword A-right
+  srword S-A-right
+  lword A-left
+  slword S-A-left
   ctab C-tab
   sctab S-C-tab
   sarrow (tap-macro - >)
